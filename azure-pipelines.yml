@@ -1,0 +1,40 @@
+trigger:
+  - main  
+  
+pool:
+  # vmImage: 'ubuntu-latest'
+  name: Default
+
+variables:
+  pythonVersion: '3.11'
+
+steps:
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(pythonVersion)'
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+  displayName: 'Install dependencies'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'djangoapp'
+    publishLocation: 'Container'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'az_pipeline'          # Name of your service connection in Azure DevOps
+    appName: 'azure-pipeline'                 # Azure App Service name
+    package: '$(Build.ArtifactStagingDirectory)/app.zip'
