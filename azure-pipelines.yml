@@ -2,7 +2,8 @@ trigger:
   - main
 
 pool:
-  name: Default
+  vmImage: 'windows-latest'
+  # name: Default
 
 variables:
   pythonVersion: '3.11'
@@ -12,20 +13,19 @@ steps:
   inputs:
     versionSpec: '$(pythonVersion)'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-    python manage.py collectstatic --noinput
-    python manage.py migrate --noinput
-  displayName: 'Install dependencies and prepare app'
+# ✅ No pip install, manage.py or collectstatic here
 
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '.'
+    rootFolderOrFile: '$(Build.SourcesDirectory)'
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
     replaceExistingArchive: true
+    archiveFilePatterns: |
+      **/*
+      !**/venv/**
+      !**/__pycache__/**
 
 - task: PublishBuildArtifacts@1
   inputs:
