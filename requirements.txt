@@ -1,3 +1,2 @@
-# django>=4.2
-# gunicorn  
-Django==5.0.7
+Django>=5.2
+gunicorn
