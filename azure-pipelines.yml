@@ -38,7 +38,7 @@ steps:
 
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: 'az_pipeline'
+    azureSubscription: 'azure-pipeline'
     appName: 'azpipeline'
     package: '$(Build.ArtifactStagingDirectory)/app.zip'
     # Ensure build happens on deployment
